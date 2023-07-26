@@ -1,9 +1,9 @@
 package org.astanait.edu.kz;
 
 import org.astanait.edu.kz.Interface.MyList;
-import org.w3c.dom.Node;
+import java.util.Arrays;
 
-public class MyArrayList<T> implements MyList {
+public class MyArrayList<T> implements MyList{
     private Object[] arr;
     private int size;
 
@@ -19,7 +19,6 @@ public class MyArrayList<T> implements MyList {
     @Override
     public boolean contains(Object o) {
         return false;
-
     }
 
     @Override
@@ -101,8 +100,6 @@ public class MyArrayList<T> implements MyList {
 
     @Override
     public void sort() {
-
+        Arrays.sort(arr, 0, size);
     }
-
-
 }
