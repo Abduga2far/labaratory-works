@@ -2,17 +2,14 @@ package org.astanait.edu.kz;
 
 import org.astanait.edu.kz.Interface.MyList;
 
-import java.util.NoSuchElementException;
-
-public class MyLinkedList<E> implements MyList<E> {
-
+public class MyLinkedList<T extends Comparable<T>> implements MyList<T> {
     private class Node {
-        E element;
+        T data;
         Node next;
         Node prev;
 
-        public Node(E element) {
-            this.element = element;
+        public Node(T data) {
+            this.data = data;
             this.next = null;
             this.prev = null;
         }
@@ -23,9 +20,9 @@ public class MyLinkedList<E> implements MyList<E> {
     private int size;
 
     public MyLinkedList() {
-        this.head = null;
-        this.tail = null;
-        this.size = 0;
+        head = null;
+        tail = null;
+        size = 0;
     }
 
     @Override
@@ -35,20 +32,13 @@ public class MyLinkedList<E> implements MyList<E> {
 
     @Override
     public boolean contains(Object o) {
-        Node current = head;
-        while (current != null) {
-            if (current.element.equals(o)) {
-                return true;
-            }
-            current = current.next;
-        }
-        return false;
+        return indexOf(o) != -1;
     }
 
     @Override
-    public void add(E element) {
-        Node newNode = new Node(element);
-        if (size == 0) {
+    public void add(T item) {
+        Node newNode = new Node(item);
+        if (head == null) {
             head = newNode;
             tail = newNode;
         } else {
@@ -60,105 +50,82 @@ public class MyLinkedList<E> implements MyList<E> {
     }
 
     @Override
-    public void add(E element, int index) {
+    public void add(T item, int index) {
         if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException("Index does not exist");
+            throw new IndexOutOfBoundsException("Index out of bounds");
         }
         if (index == size) {
-            add(element);
-        } else if (index == 0) {
-            Node newNode = new Node(element);
+            add(item);
+            return;
+        }
+        Node newNode = new Node(item);
+        if (index == 0) {
             newNode.next = head;
             head.prev = newNode;
             head = newNode;
-            size++;
         } else {
-            Node current = head;
+            Node currentNode = getNode(index);
+            newNode.next = currentNode;
+            newNode.prev = currentNode.prev;
+            currentNode.prev.next = newNode;
+            currentNode.prev = newNode;
+        }
+        size++;
+    }
+
+    private Node getNode(int index) {
+        checkIndex(index);
+        Node currentNode;
+        if (index < size / 2) {
+            currentNode = head;
             for (int i = 0; i < index; i++) {
-                current = current.next;
+                currentNode = currentNode.next;
             }
-            Node newNode = new Node(element);
-            newNode.next = current;
-            newNode.prev = current.prev;
-            current.prev.next = newNode;
-            current.prev = newNode;
-            size++;
+        } else {
+            currentNode = tail;
+            for (int i = size - 1; i > index; i--) {
+                currentNode = currentNode.prev;
+            }
+        }
+        return currentNode;
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index out of bounds");
         }
     }
 
     @Override
-    public boolean remove(Object o) {
-        Node current = head;
-        while (current != null) {
-            if (current.element.equals(o)) {
-                if (current == head) {
-                    remove(0);
-                } else if (current == tail) {
-                    remove(size - 1);
-                } else {
-                    current.prev.next = current.next;
-                    current.next.prev = current.prev;
-                    size--;
-                }
-                return true;
-            }
-            current = current.next;
+    public boolean remove(T item) {
+        int index = indexOf(item);
+        if (index != -1) {
+            remove(index);
+            return true;
         }
         return false;
     }
 
     @Override
-    public E remove(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index does not exist");
-        }
+    public T remove(int index) {
+        checkIndex(index);
+        Node removedNode = getNode(index);
         if (index == 0) {
-            return removeFirst();
-        } else if (index == size - 1) {
-            return removeLast();
-        } else {
-            Node current = head;
-            for (int i = 0; i < index; i++) {
-                current = current.next;
-            }
-            E removedElement = current.element;
-            current.prev.next = current.next;
-            current.next.prev = current.prev;
-            size--;
-            return removedElement;
-        }
-    }
-
-    private E removeFirst() {
-        if (size == 0) {
-            throw new NoSuchElementException("List is empty");
-        }
-        E removedElement = head.element;
-        if (size == 1) {
-            head = null;
-            tail = null;
-        } else {
             head = head.next;
-            head.prev = null;
-        }
-        size--;
-        return removedElement;
-    }
-
-    private E removeLast() {
-        if (size == 0) {
-            throw new NoSuchElementException("List is empty");
-        }
-        E removedElement = tail.element;
-        if (size == 1) {
-            head = null;
-            tail = null;
-        } else {
+            if (head != null) {
+                head.prev = null;
+            } else {
+                tail = null;
+            }
+        } else if (index == size - 1) {
             tail = tail.prev;
             tail.next = null;
+        } else {
+            removedNode.prev.next = removedNode.next;
+            removedNode.next.prev = removedNode.prev;
         }
         size--;
-        return removedElement;
+        return removedNode.data;
     }
 
     @Override
@@ -169,55 +136,52 @@ public class MyLinkedList<E> implements MyList<E> {
     }
 
     @Override
-    public E get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index does not exist");
-        }
-        if (index == 0) {
-            return head.element;
-        } else if (index == size - 1) {
-            return tail.element;
-        } else {
-            Node current = head;
-            for (int i = 0; i < index; i++) {
-                current = current.next;
-            }
-            return current.element;
-        }
+    public T get(int index) {
+        return getNode(index).data;
     }
 
     @Override
     public int indexOf(Object o) {
-        Node current = head;
-        int index = 0;
-        while (current != null) {
-            if (current.element.equals(o)) {
-                return index;
+        Node currentNode = head;
+        for (int i = 0; i < size; i++) {
+            if (currentNode.data.equals(o)) {
+                return i;
             }
-            current = current.next;
-            index++;
+            currentNode = currentNode.next;
         }
         return -1;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        Node current = tail;
-        int index = size - 1;
-        while (current != null) {
-            if (current.element.equals(o)) {
-                return index;
+        Node currentNode = tail;
+        for (int i = size - 1; i >= 0; i--) {
+            if (currentNode.data.equals(o)) {
+                return i;
             }
-            current = current.prev;
-            index--;
+            currentNode = currentNode.prev;
         }
         return -1;
     }
 
     @Override
     public void sort() {
-        // Sorting a linked list can be a complex task,
-        // so we can leave this method unimplemented for now.
-        // You can implement a sorting algorithm for linked lists if required.
+        if (size > 1) {
+            boolean swapped;
+            do {
+                swapped = false;
+                Node current = head;
+                while (current.next != null) {
+                    if (current.data.compareTo(current.next.data) > 0) {
+                        // Swap the nodes' data
+                        T temp = current.data;
+                        current.data = current.next.data;
+                        current.next.data = temp;
+                        swapped = true;
+                    }
+                    current = current.next;
+                }
+            } while (swapped);
+        }
     }
 }

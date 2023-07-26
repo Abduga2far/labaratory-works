@@ -6,75 +6,72 @@ public class Main {
     public static void main(String[] args) {
         // Test MyArrayList
         MyList<String> arrayList = new MyArrayList<>();
-        arrayList.add("Apple");
-        arrayList.add("Banana");
-        arrayList.add("Orange");
-        arrayList.add("Grapes");
-        arrayList.add("Kiwi");
+        arrayList.add("apple");
+        arrayList.add("banana");
+        arrayList.add("orange");
+        arrayList.add("grape");
+        arrayList.add("mango");
 
-        System.out.println("MyArrayList:");
-        System.out.println("Size: " + arrayList.size());
-        System.out.println("Contains 'Banana': " + arrayList.contains("Banana"));
-        System.out.println("Contains 'Watermelon': " + arrayList.contains("Watermelon"));
-        System.out.println("Index of 'Orange': " + arrayList.indexOf("Orange"));
-        System.out.println("Last index of 'Banana': " + arrayList.lastIndexOf("Banana"));
-        System.out.println("Element at index 2: " + arrayList.get(2));
+        System.out.println("ArrayList size: " + arrayList.size());
+        System.out.println("ArrayList contains 'orange': " + arrayList.contains("orange"));
+        System.out.println("ArrayList contains 'kiwi': " + arrayList.contains("kiwi"));
+        System.out.println("ArrayList index of 'banana': " + arrayList.indexOf("banana"));
+        System.out.println("ArrayList last index of 'apple': " + arrayList.lastIndexOf("apple"));
 
-        arrayList.remove("Grapes");
-        System.out.println("After removing 'Grapes':");
-        System.out.println("Size: " + arrayList.size());
-        System.out.println("Contains 'Grapes': " + arrayList.contains("Grapes"));
-
-        arrayList.add("Mango", 1);
-        System.out.println("After adding 'Mango' at index 1:");
-        System.out.println("Size: " + arrayList.size());
-        System.out.println("Element at index 1: " + arrayList.get(1));
+        System.out.println("ArrayList elements: ");
+        for (int i = 0; i < arrayList.size(); i++) {
+            System.out.print(arrayList.get(i) + " ");
+        }
+        System.out.println();
 
         arrayList.sort();
-        System.out.println("After sorting:");
-        for (int i = 0; i < arrayList.size(); i++) {
-            System.out.println("Element at index " + i + ": " + arrayList.get(i));
-        }
 
-        arrayList.clear();
-        System.out.println("After clearing:");
-        System.out.println("Size: " + arrayList.size());
+        System.out.println("Sorted ArrayList elements:");
+        for (int i = 0; i < arrayList.size(); i++) {
+            System.out.print(arrayList.get(i) + " ");
+        }
+        System.out.println();
+
+        arrayList.remove(1); // Remove element at index 1
+        System.out.println("MyArrayList after removing element at index 1: ");
+        for (int i = 0; i < arrayList.size(); i++) {
+            System.out.print(arrayList.get(i) + " ");
+        }
+        System.out.println();
 
         // Test MyLinkedList
         MyList<Integer> linkedList = new MyLinkedList<>();
         linkedList.add(10);
-        linkedList.add(20);
         linkedList.add(30);
         linkedList.add(40);
+        linkedList.add(20);
         linkedList.add(50);
 
-        System.out.println("\nMyLinkedList:");
-        System.out.println("Size: " + linkedList.size());
-        System.out.println("Contains 30: " + linkedList.contains(30));
-        System.out.println("Contains 60: " + linkedList.contains(60));
-        System.out.println("Index of 20: " + linkedList.indexOf(20));
-        System.out.println("Last index of 40: " + linkedList.lastIndexOf(40));
-        System.out.println("Element at index 2: " + linkedList.get(2));
+        System.out.println("\nLinkedList size: " + linkedList.size());
+        System.out.println("LinkedList contains 30: " + linkedList.contains(30));
+        System.out.println("LinkedList contains 60: " + linkedList.contains(60));
+        System.out.println("LinkedList index of 20: " + linkedList.indexOf(20));
+        System.out.println("LinkedList last index of 40: " + linkedList.lastIndexOf(40));
 
-        linkedList.remove(3);
-        System.out.println("After removing element at index 3:");
-        System.out.println("Size: " + linkedList.size());
-        System.out.println("Contains 40: " + linkedList.contains(40));
-
-        linkedList.add(25, 1);
-        System.out.println("After adding 25 at index 1:");
-        System.out.println("Size: " + linkedList.size());
-        System.out.println("Element at index 1: " + linkedList.get(1));
+        System.out.println("LinkedList elements:");
+        for (int i = 0; i < linkedList.size(); i++) {
+            System.out.print(linkedList.get(i) + " ");
+        }
+        System.out.println();
 
         linkedList.sort();
-        System.out.println("After sorting:");
-        for (int i = 0; i < linkedList.size(); i++) {
-            System.out.println("Element at index " + i + ": " + linkedList.get(i));
-        }
 
-        linkedList.clear();
-        System.out.println("After clearing:");
-        System.out.println("Size: " + linkedList.size());
+        System.out.println("Sorted LinkedList elements:");
+        for (int i = 0; i < linkedList.size(); i++) {
+            System.out.print(linkedList.get(i) + " ");
+        }
+        System.out.println();
+
+        linkedList.remove(Integer.valueOf("40")); // Remove 40
+        System.out.println("MyLinkedList after removing 'banana': ");
+        for (int i = 0; i < linkedList.size(); i++) {
+            System.out.print(linkedList.get(i) + " ");
+        }
+        System.out.println();
     }
 }
-

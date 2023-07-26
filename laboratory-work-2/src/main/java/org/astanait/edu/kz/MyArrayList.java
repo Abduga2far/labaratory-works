@@ -1,16 +1,18 @@
 package org.astanait.edu.kz;
 
 import org.astanait.edu.kz.Interface.MyList;
+
 import java.util.Arrays;
 
-public class MyArrayList<T> implements MyList{
+public class MyArrayList<T> implements MyList<T> {
     private Object[] arr;
     private int size;
 
-    public MyArrayList(){
-        this.arr = (Object[]) new Object[5];
+    public MyArrayList() {
+        this.arr = new Object[5];
         this.size = 0;
     }
+
     @Override
     public int size() {
         return size;
@@ -18,84 +20,96 @@ public class MyArrayList<T> implements MyList{
 
     @Override
     public boolean contains(Object o) {
+        for (int i = 0; i < size; i++) {
+            if (arr[i].equals(o)) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
-    public void add(Object item) {
-        if(size == arr.length){
+    public void add(T item) {
+        if (size == arr.length) {
             increaseBuffer();
         }
         arr[size++] = item;
     }
-    private void increaseBuffer(){
-        Object[] newArr = (Object[]) new Object[arr.length*2];
-        for(int i=0; i<size; i++){
-            newArr[i]=arr[i];
-        }
+
+    private void increaseBuffer() {
+        Object[] newArr = new Object[arr.length * 2];
+        System.arraycopy(arr, 0, newArr, 0, size);
         arr = newArr;
-    }
-    @Override
-    public void add(Object item, int index) {
-        checkIndex(index);
-        if(size == arr.length){
-            increaseBuffer();
-        }
-        for(int i = size -1 ; i>= index; i--){
-            arr[i] = arr[i+1];
-        }
-        arr[index] = item;
-    }
-    private void checkIndex(int index){
-        if(index<0 && index>=size){
-            System.out.println("Index does not exist");
-        }
-    }
-    @Override
-    public boolean remove(Object item) {
-        int index=0;
-        boolean found = false;
-        for(int i=0; i<size; i++){
-            if(arr[i]==item){
-                index = i;
-                found=true;
-            }
-        }
-        if(found){
-            remove(index);
-        }
-        return found;
     }
 
     @Override
-    public Object remove(int index) {
-        Object temp = arr[index];
-        for(int i=index-1; i<size; i++){
-            arr[i-1] = arr[i];
+    public void add(T item, int index) {
+        checkIndex(index);
+        if (size == arr.length) {
+            increaseBuffer();
         }
+        System.arraycopy(arr, index, arr, index + 1, size - index);
+        arr[index] = item;
+        size++;
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index out of bounds");
+        }
+    }
+
+    @Override
+    public boolean remove(T item) {
+        for (int i = 0; i < size; i++) {
+            if (arr[i].equals(item)) {
+                remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public T remove(int index) {
+        checkIndex(index);
+        T removedItem = (T) arr[index];
+        System.arraycopy(arr, index + 1, arr, index, size - index - 1);
+        arr[size - 1] = null;
         size--;
-        return temp;
+        return removedItem;
     }
 
     @Override
     public void clear() {
-        this.arr = (T[]) new Object[5];
-        this.size = 0;
+        arr = new Object[5];
+        size = 0;
     }
 
     @Override
-    public Object get(int index) {
-        return arr[index];
+    public T get(int index) {
+        checkIndex(index);
+        return (T) arr[index];
     }
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+        for (int i = 0; i < size; i++) {
+            if (arr[i].equals(o)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        for (int i = size - 1; i >= 0; i--) {
+            if (arr[i].equals(o)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
