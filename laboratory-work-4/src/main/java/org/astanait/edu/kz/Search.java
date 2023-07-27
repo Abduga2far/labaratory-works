@@ -2,25 +2,34 @@ package org.astanait.edu.kz;
 
 import java.util.*;
 
-public abstract class Search<V> {
-    protected WeightedGraph<V> graph;
+public class Search<V> {
+    protected int count;
+    protected Set<Vertex<V>> marked;
+    protected Map<Vertex<V>, Vertex<V>> edgeTo;
+    protected final Vertex<V> source;
 
-    public Search(WeightedGraph<V> graph) {
-        this.graph = graph;
+    public Search(Vertex<V> source) {
+        this.source = source;
+        marked = new HashSet<>();
+        edgeTo = new HashMap<>();
     }
 
-    public abstract boolean hasPath(Vertex<V> source, Vertex<V> destination);
+    public boolean hasPathTo(Vertex<V> v) {
+        return marked.contains(v);
+    }
 
-    public abstract List<Vertex<V>> getPath(Vertex<V> source, Vertex<V> destination);
-
-    protected List<Vertex<V>> reconstructPath(Map<Vertex<V>, Vertex<V>> cameFrom, Vertex<V> source, Vertex<V> destination) {
-        LinkedList<Vertex<V>> path = new LinkedList<>();
-        Vertex<V> current = destination;
-        while (!current.equals(source)) {
-            path.addFirst(current);
-            current = cameFrom.get(current);
+    public LinkedList<Vertex<V>> pathTo(Vertex<V> v) {
+        if (!hasPathTo(v)) return null;
+        LinkedList<Vertex<V>> linkedList = new LinkedList<>();
+        for (Vertex<V> i = v; i != source; i = edgeTo.get(i)) {
+            linkedList.push(i);
         }
-        path.addFirst(source);
-        return path;
+        linkedList.push(source);
+
+        return linkedList;
+    }
+
+    public int getCount() {
+        return count;
     }
 }

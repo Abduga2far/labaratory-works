@@ -1,34 +1,53 @@
 package org.astanait.edu.kz;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class WeightedGraph<V> {
-    private Map<Vertex<V>, List<Vertex<V>>> map;
+public class WeightedGraph<T> {
+    private final boolean undirected;
+    private Set<Vertex<T>> set = new HashSet<>();
 
     public WeightedGraph() {
-        this.map = new HashMap<>();
+        this.undirected = true;
     }
 
-    public void addVertex(Vertex<V> vertex) {
-        map.put(vertex, new ArrayList<>());
+    public WeightedGraph(boolean undirected) {
+        this.undirected = undirected;
     }
 
-    public void addEdge(Vertex<V> source, Vertex<V> destination, double weight) {
-        if (!map.containsKey(source) || !map.containsKey(destination)) {
-            throw new IllegalArgumentException("Both source and destination vertices should exist in the graph.");
+    public void addVertex(Vertex<T> vertex) {
+        set.add(vertex);
+    }
+
+
+    public void addEdgePrivate(Vertex<T> source, Vertex<T> destination, double weight) {
+        set.add(source);
+        for (Vertex<T> vertex : set) {
+            if (vertex.equals(source)) {
+                vertex.addAdjacentVertex(destination, weight);
+            }
         }
-        source.addAdjacent(destination, weight);
-        map.get(source).add(destination);
     }
 
-    public List<Vertex<V>> getAdjacentVertices(Vertex<V> vertex) {
-        return map.getOrDefault(vertex, new ArrayList<>());
+    public void addEdge(Vertex<T> source, Vertex<T> destination, double weight) {
+        addEdgePrivate(source, destination, weight);
+        if (undirected) {
+            addEdgePrivate(destination, source, weight);
+        }
     }
 
-    public Map<Vertex<V>, List<Vertex<V>>> getGraphMap() {
-        return map;
+
+    public Iterable<Vertex<T>> adjacencyList(Vertex<T> vertex) {
+        if (set.contains(vertex)) {
+            List<Vertex<T>> vertices = new ArrayList<>();
+            for (Vertex<T> v : set)
+                if (v.equals(vertex))
+                    vertices.addAll(v.getAdjacentVertices().keySet());
+            return vertices;
+        }
+        return null;
+    }
+
+    public Set<Vertex<T>> getVertices() {
+        return set;
     }
 }
